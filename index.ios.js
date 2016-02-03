@@ -49,7 +49,6 @@ class REACTtest extends Component {
     )
   }
 
-
   renderMovie(movie) {
     return (
       <View style={styles.container}>
@@ -85,9 +84,6 @@ class REACTtest extends Component {
   }
 
 }
-
-
-
 
 const styles = StyleSheet.create({
   container: {

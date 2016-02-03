@@ -7,23 +7,49 @@ import React, {
   AppRegistry,
   Component,
   Image,
+  ListView,
   StyleSheet,
   Text,
   View
 } from 'react-native';
 
-var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json';
+var API_KEY = '7waqfqbprs7pajbz28mqf6vz';
+var API_URL = 'http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json';
+var PAGE_SIZE = 25;
+var PARAMS = '?apikey=' + API_KEY + '&page_limit=' + PAGE_SIZE;
+var REQUEST_URL = API_URL + PARAMS;
 
 class REACTtest extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      movies: null,
-    }
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      }),
+      loaded: false,
+    };
+  }
+
+  componentDidMount() {
+    this.fetchData();
   }
 
   render() {
-    var movie = MOCKED_MOVIES_DATA[0];
+
+    if (!this.state.loaded) {
+      return this.renderLoadingView();
+    }
+
+    return (
+      <ListView
+        dataSource = { this.state.dataSource }
+        renderRow = { this.renderMovie }
+        style = { styles.listView }
+      />
+    )
+  }
+
+  renderMovie(movie) {
     return (
       <View style={styles.container}>
         <Image source={{uri: movie.posters.thumbnail}} style={styles.thumbnail}/>
@@ -34,6 +60,29 @@ class REACTtest extends Component {
       </View>
     );
   }
+
+  renderLoadingView() {
+    return (
+      <View style={styles.container}>
+        <Text>
+          Loading movies
+        </Text>
+      </View>
+    )
+  }
+
+  fetchData() {
+    fetch(REQUEST_URL)
+      .then((response) => response.json())
+      .then((responseData) => {
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
+          loaded: true,
+        });
+      })
+      .done();
+  }
+
 }
 
 const styles = StyleSheet.create({
@@ -43,6 +92,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+    margin: 3,
   },
   thumbnail: {
     width: 53,
@@ -59,7 +109,11 @@ const styles = StyleSheet.create({
   },
   year: {
     textAlign: 'center',
-  }
+  },
+  listView: {
+    paddingTop: 20,
+    backgroundColor: '#F5FCFF',
+  },
 });
 
 var MOCKED_MOVIES_DATA = [
