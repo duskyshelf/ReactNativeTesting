@@ -1,7 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
 'use strict';
 import React, {
   AppRegistry,
@@ -33,6 +29,7 @@ class REACTtest extends Component {
   }
 
   componentDidMount() {
+    this.dataLogger();
     this.fetchData();
   }
 
@@ -70,10 +67,17 @@ class REACTtest extends Component {
     )
   }
 
+  dataLogger() {
+    fetch(REQUEST_URL)
+    .then((response) => console.log(Object.prototype.toString.call(response)))
+    .done();
+  }
+
   fetchData() {
     fetch(REQUEST_URL)
       .then((response) => response.json())
       .then((responseData) => {
+        console.log(Object.prototype.toString.call(responseData));
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
           loaded: true,

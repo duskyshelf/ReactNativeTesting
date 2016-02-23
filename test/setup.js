@@ -1,3 +1,4 @@
+import React from 'react-native';
 import jsdom from 'jsdom';
 
 var FAKE_DOM_HTML = `
