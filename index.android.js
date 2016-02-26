@@ -9,6 +9,8 @@ import React, {
   View
 } from 'react-native';
 
+var Film = require('./film').default;
+
 var API_KEY = '7waqfqbprs7pajbz28mqf6vz';
 var API_URL = 'http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json';
 var PAGE_SIZE = 25;
@@ -27,6 +29,7 @@ class REACTtest extends Component {
   }
 
   componentDidMount() {
+    this.dataLogger();
     this.fetchData();
   }
 
@@ -47,13 +50,10 @@ class REACTtest extends Component {
 
   renderMovie(movie) {
     return (
-      <View style={styles.container}>
-        <Image source={{uri: movie.posters.thumbnail}} style={styles.thumbnail}/>
-        <View style={styles.rightContainer} >
-          <Text style={styles.title}>{movie.title}</Text>
-          <Text style={styles.year}>{movie.year}</Text>
-        </View>
-      </View>
+      <Film
+        movie = { movie }
+        style = { styles }
+      />
     );
   }
 
@@ -67,10 +67,17 @@ class REACTtest extends Component {
     )
   }
 
+  dataLogger() {
+    fetch(REQUEST_URL)
+    .then((response) => console.log(Object.prototype.toString.call(response)))
+    .done();
+  }
+
   fetchData() {
     fetch(REQUEST_URL)
       .then((response) => response.json())
       .then((responseData) => {
+        console.log(Object.prototype.toString.call(responseData));
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
           loaded: true,
